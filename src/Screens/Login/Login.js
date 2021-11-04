@@ -2,30 +2,15 @@
 
 import React from "react";
 import { Component } from "react";
-import { StyleSheet, Text, View, SafeAreaView, SectionList, StatusBar, Button } from "react-native";
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { StyleSheet,TouchableOpacity, Text, View, SafeAreaView, SectionList, StatusBar, Button } from "react-native";
+//import { TouchableOpacity } from "react-native-gesture-handler";
+import { widthPercentageToDP as wp, heightPercentageToDP as hp, heightPercentageToDP } from 'react-native-responsive-screen';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { triggerGetApi } from '../../actions';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import moment from 'moment';
 
-const DATA = [
-    {
-        title: "Main dishes",
-        data: ["Pizza", "Burger", "Risotto"]
-    },
-    {
-        title: "Sides",
-        data: ["French Fries", "Onion Rings", "Fried Shrimps"]
-    },
-    {
-        title: "Drinks",
-        data: ["Water", "Coke", "Beer"]
-    },
-    {
-        title: "Desserts",
-        data: ["Cheese Cake", "Ice Cream"]
-    }
-];
 
 class Login extends Component {
     state={
@@ -45,40 +30,7 @@ componentDidMount=()=>{
   } 
   onLoginSuccess=async(data)=>{
 
-    //  const uTable = data.reduce((acc, it) => (acc['data'] = it, acc), {})
-    //  console.log(uTable);
 
-    var array =data;
-//             var are=[]
-//     const mappedStartDate = data.reduce((groupeElement, element ) => {
-//       //  console.log("element :- ",groupeElement);
-//             var startArray = (element.Date)
-           
-                     
-//             if(groupeElement[startArray] == null){
-//                     groupeElement[startArray] = [];
-//                   }
-//                   groupeElement[startArray].push({element,data:startArray});
-            
-      
-
-//             return groupeElement;
-    
-         
-//              console.log("index :- ",index);
-//     }, {});
-
-//    console.log("mapped start Date :- ",JSON.stringify(mappedStartDate));
-   
-
-
-// let a=[]
-// let i=0
-// for(i;i<array.length;i++){
-//   a.push({'title':array[i].Date,'data':[array[i]]})
-// }
-// //console.log(a);
-// await this.setState({data:a});
 
 var finalData = [];
 data.reduce((groupedArray, items) => {
@@ -147,10 +99,41 @@ this.setState({
 
     Item = (item) => (
      
-        <View style={styles.item}>
+        <TouchableOpacity style={{flexDirection:'row',borderBottomColor:'gray',borderBottomWidth:1,height:hp('8%')}}>
+            <View style={{marginLeft:wp('3%'),alignContent:'center',alignItems:'center',width:wp('50%'),flexDirection:'row',justifyContent:'space-evenly'}}> 
+           {item.title.item.DutyCode =='FLIGHT' ? <Icon name="plane" size={hp('5%')} color="#36454F" />
+            :
+            item.title.item.DutyCode =='Standby' ? <Icon name="clipboard" size={hp('5%')} color="#36454F" /> :
+         item.title.item.DutyCode =='LAYOVER' ?  <Icon name="suitcase" size={hp('5%')} color="#36454F" /> :
+           null
+          }
+           {item.title.item.DutyCode =='LAYOVER' ?
+            <View style={{height:hp('7%'),width:wp('35%'),flexDirection:'column',alignItems:'flex-start',alignContent:'flex-start',justifyContent:'flex-start'}}>
+            <Text style={{marginLeft:wp('4%'),alignSelf:'flex-start',color:'#36454F',fontWeight:'bold',fontSize:hp('3%')}}>Layover</Text>
+            <Text  style={{marginLeft:wp('4%'),alignSelf:'flex-start',color:'gray',fontWeight:'bold',fontSize:hp('2.2%')}}>{item.title.item.Destination}</Text>           
+            </View> :
+            item.title.item.DutyCode =='Standby' ?
+            <View style={{height:hp('7%'),width:wp('35%'),flexDirection:'column',alignItems:'flex-start',alignContent:'flex-start',justifyContent:'flex-start'}}>
+            <Text style={{marginLeft:wp('4%'),alignSelf:'flex-start',color:'#36454F',fontWeight:'bold',fontSize:hp('3%')}}>Standby</Text>
+            <Text  style={{marginLeft:wp('4%'),alignSelf:'flex-start',color:'gray',fontWeight:'bold',fontSize:hp('2.2%')}}>{item.title.item.Destination}</Text>           
+            </View> :
+
+             <View style={{height:hp('7%'),width:wp('35%'),flexDirection:'column',alignItems:'flex-start',alignContent:'flex-start',justifyContent:'flex-start'}}>
+             <Text style={{alignSelf:'center',color:'#36454F',fontWeight:'bold',fontSize:hp('3%')}}>{item.title.item.Departure} - {item.title.item.Destination}</Text>
+           
+             </View>
+        }
+          
+            </View>
+            <View style={{alignItems:'flex-end',justifyContent:'flex-end',width:wp('42%')}}>
+           {item.title.item.DutyCode =='Standby'? <Text style={{alignSelf:'flex-end',color:'gray',fontSize:hp('2.2%'),marginBottom:hp('0%')}}>Match Crew</Text>: null }
+                <Text style={{alignSelf:'flex-end',color:'red',fontSize:hp('2.2%'),marginBottom:hp('1%')}}>{item.title.item.Time_Depart} - {item.title.item.Time_Arrive}</Text>
+            </View>
+        </TouchableOpacity>
+        // <TouchableOpacity style={styles.item}>
          
-            <Text style={styles.title}>{item.title.item.Destination}</Text>
-        </View>
+        //     <Text style={styles.title}>{item.title.item.Destination}</Text>
+        // </TouchableOpacity>
     );
 
     render() {
@@ -163,7 +146,10 @@ this.setState({
                     keyExtractor={(item, index) => item + index}
                     renderItem={(item) => <this.Item title={item} />}
                     renderSectionHeader={({ section: { title } }) => (
-                        <Text style={styles.header}>{title}</Text>
+                        <View style={styles.header}>
+            <Text style={styles.headerText}>{title}</Text>
+                        </View>
+                 
                     )}
                 />
             </SafeAreaView>
@@ -186,8 +172,15 @@ const styles = StyleSheet.create({
         fontSize: hp('2.8%'),
         width: wp('100%'),
         height:hp('4.7%'),
-        backgroundColor: "gray",
-        textAlign:'center'
+        backgroundColor: "#D3D3D3",
+        justifyContent:'center',flexDirection:'column'
+        //textAlign:'center'
+    
+    }, 
+     headerText: {
+        fontSize: hp('2.8%'),
+        marginLeft:wp('4%')
+    
     },
     title: {
         fontSize: 24

@@ -9,8 +9,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { triggerGetApi } from '../../actions';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import Icon1 from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
-
+import _ from 'lodash'
 
 class Login extends Component {
     state={
@@ -20,7 +21,6 @@ class Login extends Component {
 
 componentDidMount=()=>{
     this.onLogin();
-
     
 }
 
@@ -32,24 +32,6 @@ componentDidMount=()=>{
 
 
 
-var finalData = [];
-data.reduce((groupedArray, items) => {
-    const newDate = items.Date;
-    if(groupedArray[newDate] == null){
-        groupedArray[newDate] = [];
-    }
-    groupedArray[newDate].push(items);
-    finalData.push({
-        'title': newDate,
-        'data': groupedArray[newDate]
-    });
-    return finalData
-},[]);
-
-console.log(JSON.stringify(finalData));
-
-
-
 
 var finalData = [];
 data.reduce((groupedArray, items) => {
@@ -65,36 +47,20 @@ data.reduce((groupedArray, items) => {
     return finalData
 },[]);
 
-console.log(JSON.stringify(finalData));
+// console.log(JSON.stringify(finalData[0].title));
 
-
+var non_duplidated_data = _.uniqWith(finalData, _.isEqual);
+//console.log(non_duplidated_data)
 this.setState({
-    data:finalData
+    data:non_duplidated_data
 })
-// const people = [
-//     { name: 'Lee', age: 21 },
-//     { name: 'Ajay', age: 20 },
-//     { name: 'Jane', age: 20 }
-//  ];
-//  function groupBy(objectArray, Date) {
-//     return objectArray.reduce((acc, obj) => {
-//        const key = obj[Date];
-//        if (!acc[key]) {
-//           acc[key] = [];
-//        }
-//        // Add object to list for given key's value
-//        acc[key].push({'data':obj});
-//        return acc;
-//     }, {});
-//  }
-//  const groupedPeople = groupBy(array, {});
-//  console.log(groupedPeople);
+
 
   }
    
   onLoginError=(data)=>{
     console.log("log errorr",data)
-}
+} 
 
 
     Item = (item) => (
@@ -105,7 +71,9 @@ this.setState({
             :
             item.title.item.DutyCode =='Standby' ? <Icon name="clipboard" size={hp('5%')} color="#36454F" /> :
          item.title.item.DutyCode =='LAYOVER' ?  <Icon name="suitcase" size={hp('5%')} color="#36454F" /> :
-           null
+        item.title.item.DutyCode =='POSITIONING' ?
+         <Icon name="crosshairs" size={hp('5%')} color="#36454F" /> :
+         <Icon1 name="plane-slash" size={hp('4%')} color="#36454F" />
           }
            {item.title.item.DutyCode =='LAYOVER' ?
             <View style={{height:hp('7%'),width:wp('35%'),flexDirection:'column',alignItems:'flex-start',alignContent:'flex-start',justifyContent:'flex-start'}}>
@@ -147,7 +115,7 @@ this.setState({
                     renderItem={(item) => <this.Item title={item} />}
                     renderSectionHeader={({ section: { title } }) => (
                         <View style={styles.header}>
-            <Text style={styles.headerText}>{title}</Text>
+            <Text style={styles.headerText}>{moment(title,'DD/MM/YYYY').format('ddd DD MMM. YYYY')}</Text>
                         </View>
                  
                     )}
@@ -178,8 +146,10 @@ const styles = StyleSheet.create({
     
     }, 
      headerText: {
-        fontSize: hp('2.8%'),
-        marginLeft:wp('4%')
+        fontSize: hp('2.4%'),
+        marginLeft:wp('4%'),
+        fontWeight:'bold',
+        color:'#36454F'
     
     },
     title: {

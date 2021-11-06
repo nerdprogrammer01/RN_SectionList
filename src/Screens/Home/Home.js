@@ -100,12 +100,12 @@ class Home extends Component {
                                 <Icon1 name="plane-slash" size={hp('4%')} color="#36454F" />
                 }
                 {item.title.item.DutyCode == 'LAYOVER' ?
-                    <View style={{ height: hp('7%'), width: wp('35%'), flexDirection: 'column', alignItems: 'flex-start', alignContent: 'flex-start', justifyContent: 'flex-start' }}>
+                    <View style={{ height: hp('7.3%'), width: wp('35%'), flexDirection: 'column', alignItems: 'flex-start', alignContent: 'flex-start', justifyContent: 'flex-start' }}>
                         <Text style={{ marginLeft: wp('4%'), alignSelf: 'flex-start', color: '#36454F', fontWeight: 'bold', fontSize: hp('3%') }}>Layover</Text>
                         <Text style={{ marginLeft: wp('4%'), alignSelf: 'flex-start', color: 'gray', fontWeight: 'bold', fontSize: hp('2.2%') }}>{item.title.item.Destination}</Text>
                     </View> :
                     item.title.item.DutyCode == 'Standby' ?
-                        <View style={{ height: hp('7%'), width: wp('35%'), flexDirection: 'column', alignItems: 'flex-start', alignContent: 'flex-start', justifyContent: 'flex-start' }}>
+                        <View style={{ height: hp('7.3%'), width: wp('35%'), flexDirection: 'column', alignItems: 'flex-start', alignContent: 'flex-start', justifyContent: 'flex-start' }}>
                             <Text style={{ marginLeft: wp('4%'), alignSelf: 'flex-start', color: '#36454F', fontWeight: 'bold', fontSize: hp('3%') }}>Standby</Text>
                             <Text style={{ marginLeft: wp('4%'), alignSelf: 'flex-start', color: 'gray', fontWeight: 'bold', fontSize: hp('2.2%') }}>{item.title.item.Destination}</Text>
                         </View> :

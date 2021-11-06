@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Component } from "react";
-import { StyleSheet, TouchableOpacity, Text, View, SafeAreaView, SectionList, StatusBar } from "react-native";
+import { StyleSheet, TouchableOpacity, Text, View, SafeAreaView, SectionList, Button, StatusBar } from "react-native";
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -12,30 +12,33 @@ import Icon1 from 'react-native-vector-icons/FontAwesome5';
 import moment from 'moment';
 import _ from 'lodash'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Modal from "react-native-modal";
+
 
 class Home extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state={
+        this.state = {
             data: [],
-            refreshing: false
+            refreshing: false,
+            modalVisible: true
         };
     }
-   
 
-    componentDidMount =async () => {
-       
+
+    componentDidMount = async () => {
+
         const data = await AsyncStorage.getItem('Api_data');
-    // console.log("finalArr",JSON.parse(data))
-       if(data != null){
-       this.setData(JSON.parse(data));
-       console.log("Async storage")
-       }else{
-        this.onLogin(); 
-        console.log("on Api call")
-       }
-    
+        // console.log("finalArr",JSON.parse(data))
+        if (data != null) {
+            this.setData(JSON.parse(data));
+            console.log("Async storage")
+        } else {
+            this.onLogin();
+            console.log("on Api call")
+        }
 
+         setTimeout(() => { this.toggleModal() }, 2500);
     }
 
     onLogin = () => {
@@ -43,41 +46,50 @@ class Home extends Component {
     }
     onLoginSuccess = async (data) => {
         await AsyncStorage.setItem('Api_data', JSON.stringify(data))
-       await this.setData(data)
- 
+        await this.setData(data)
+
     }
 
     onLoginError = (data) => {
         console.log("log errorr", data)
     }
 
-  setData=(data)=>{
-    var finalData = [];
-    data.reduce((groupedArray, items) => {
-        const newDate = items.Date;
-        if (groupedArray[newDate] == null) {
-            groupedArray[newDate] = [];
-        }
-        groupedArray[newDate].push(items);
-        finalData.push({
-            'title': newDate,
-            'data': groupedArray[newDate]
-        });
-        return finalData
-    }, []);
+    setData = (data) => {
+        var finalData = [];
+        data.reduce((groupedArray, items) => {
+            const newDate = items.Date;
+            if (groupedArray[newDate] == null) {
+                groupedArray[newDate] = [];
+            }
+            groupedArray[newDate].push(items);
+            finalData.push({
+                'title': newDate,
+                'data': groupedArray[newDate]
+            });
+            return finalData
+        }, []);
 
-    var non_duplidated_data = _.uniqWith(finalData, _.isEqual);
-    this.setState({
-        data: non_duplidated_data
-    })
+        var non_duplidated_data = _.uniqWith(finalData, _.isEqual);
+        this.setState({
+            data: non_duplidated_data
+        })
 
-  }
+    }
+
+    toggleModal = () => {
+        this.setState({
+            modalVisible: !this.state.modalVisible
+        })
+    };
+
+
+
     Item = (item) => (
-      
-        <TouchableOpacity 
-        //onPress={()=>  console.log(item.title.item)}
-        onPress={()=> this.props.navigation.navigate('Flights',{datas:item.title.item})}
-         style={{ flexDirection: 'row', borderBottomColor: 'gray', borderBottomWidth: 1, height: hp('8%') }}>
+
+        <TouchableOpacity
+            //onPress={()=>  console.log(item.title.item)}
+            onPress={() => this.props.navigation.navigate('Flights', { datas: item.title.item })}
+            style={{ flexDirection: 'row', borderBottomColor: 'gray', borderBottomWidth: 1, height: hp('8%') }}>
             <View style={{ marginLeft: wp('3%'), alignContent: 'center', alignItems: 'center', width: wp('50%'), flexDirection: 'row', justifyContent: 'space-evenly' }}>
                 {item.title.item.DutyCode == 'FLIGHT' ? <Icon name="plane" size={hp('5%')} color="#36454F" />
                     :
@@ -110,10 +122,24 @@ class Home extends Component {
                 <Text style={{ alignSelf: 'flex-end', color: '#800000', fontSize: hp('2.3%'), marginBottom: hp('1%') }}>{item.title.item.Time_Depart} - {item.title.item.Time_Arrive}</Text>
             </View>
         </TouchableOpacity>
-        // <TouchableOpacity style={styles.item}>
 
-        //     <Text style={styles.title}>{item.title.item.Destination}</Text>
-        // </TouchableOpacity>
+    );
+
+    modal = () => (
+        <View style={{ alignSelf: 'center', width: wp('88%'), height: hp('55%'), backgroundColor: 'white', borderRadius: 15 }}>
+            <View style={{alignContent:'center',backgroundColor:'#D3D3D3',height:hp('5%'),borderTopRightRadius:15,borderTopLeftRadius:15}}>
+            <Text style={{ fontSize: hp('3.2%'),alignSelf:'center',fontWeight:'bold',color:'gray'}}>Today's Duty</Text>
+            </View>
+            <View style={{ alignSelf: 'center', alignItems: 'center', justifyContent: 'center', marginTop: hp('8%') }}>
+             
+                <Icon name="plane" size={hp('25%')} color="#36454F" />
+                <Text style={{ fontSize: hp('3%'), marginBottom: hp('3%') }}>There is No Duty for Today</Text>
+            </View>
+
+            {/* <Text>Hello!</Text>
+
+        <Button title="Hide modal" onPress={()=>this.toggleModal()} /> */}
+        </View>
     );
 
     render() {
@@ -132,6 +158,9 @@ class Home extends Component {
 
                     )}
                 />
+                <Modal isVisible={this.state.modalVisible}>
+                    <this.modal />
+                </Modal>
             </SafeAreaView>
         )
     }
@@ -140,7 +169,7 @@ class Home extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: StatusBar.currentHeight,
+        paddingTop: hp('3%'),
 
     },
     item: {

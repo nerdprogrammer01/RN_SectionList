@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '10.0'
 
-target 'Redux_Template' do
+target 'CAE' do
   config = use_native_modules!
 
   use_react_native!(
@@ -12,7 +12,7 @@ target 'Redux_Template' do
     :hermes_enabled => false
   )
 
-  target 'Redux_TemplateTests' do
+  target 'CAETests' do
     inherit! :complete
     # Pods for testing
   end
